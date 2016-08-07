@@ -79,6 +79,17 @@ func (b *InsertBuilder) Exec() (sql.Result, error) {
 	return result, nil
 }
 
+// InsertMap inserts the elements of the map as column/value pairs for the statement
+func (b *InsertBuilder) InsertMap(m map[string]interface{}) *InsertBuilder {
+	var vals []interface{}
+	for k, v := range m {
+		b.Column = append(b.Column, k)
+		vals = append(vals, v)
+	}
+	b.Value = append(b.Value, vals)
+	return b
+}
+
 func (b *InsertBuilder) Columns(column ...string) *InsertBuilder {
 	b.InsertStmt.Columns(column...)
 	return b
