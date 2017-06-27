@@ -4,8 +4,9 @@ package dbr
 type UpdateStmt struct {
 	raw
 
-	Table string
-	Value map[string]interface{}
+	Table     string
+	Value     map[string]interface{}
+	Returning []string
 
 	WhereCond []Builder
 }
@@ -48,6 +49,17 @@ func (b *UpdateStmt) Build(d Dialect, buf Buffer) error {
 			return err
 		}
 	}
+
+	if len(b.Returning) > 0 {
+		buf.WriteString(" RETURNING ")
+		for i, col := range b.Returning {
+			if i > 0 {
+				buf.WriteString(",")
+			}
+			buf.WriteString(d.QuoteIdent(col))
+		}
+	}
+
 	return nil
 }
 
@@ -93,4 +105,8 @@ func (b *UpdateStmt) SetMap(m map[string]interface{}) *UpdateStmt {
 		b.Set(col, val)
 	}
 	return b
+}
+
+func (b *UpdateStmt) Return(columns ...string) {
+	b.Returning = columns
 }

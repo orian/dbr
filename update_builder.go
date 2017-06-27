@@ -90,3 +90,42 @@ func (b *UpdateBuilder) Build(d Dialect, buf Buffer) error {
 	}
 	return nil
 }
+
+func (b *UpdateBuilder) Return(columns ...string) *UpdateBuilder {
+	b.UpdateStmt.Return(columns...)
+	return b
+}
+
+func (b *UpdateBuilder) Load(value interface{}) (int, error) {
+	return query(b.runner, b.EventReceiver, b, b.Dialect, value)
+}
+
+func (b *UpdateBuilder) LoadStruct(value interface{}) error {
+	count, err := query(b.runner, b.EventReceiver, b, b.Dialect, value)
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return ErrNotFound
+	}
+	return nil
+}
+
+func (b *UpdateBuilder) LoadStructs(value interface{}) (int, error) {
+	return query(b.runner, b.EventReceiver, b, b.Dialect, value)
+}
+
+func (b *UpdateBuilder) LoadValue(value interface{}) error {
+	count, err := query(b.runner, b.EventReceiver, b, b.Dialect, value)
+	if err != nil {
+		return err
+	}
+	if count == 0 {
+		return ErrNotFound
+	}
+	return nil
+}
+
+func (b *UpdateBuilder) LoadValues(value interface{}) (int, error) {
+	return query(b.runner, b.EventReceiver, b, b.Dialect, value)
+}
